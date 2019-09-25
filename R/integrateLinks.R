@@ -14,14 +14,8 @@
 ##############################################################################
 # $Id$
 
-# This function evaluates the effects of possible feeder mechanisms which could potentially
-# bee added to the PKN. A case study is model is build by binding feeder mechanisms with a
-# subset of the original PKN linking all the cues set which have an influence over a specific
-# measurement over which we are doing the evaluation and their corresponding directly linked
-# measurements. A mechanism is only accepted if the overall fit of that measurement is improved
-# by considering the feeder mechanism which we add and evaluate and which at the same time does
-# not worsen the fit of the other measurements included in the case model within a specific 
-# tolerance parameter.
+# This function integrates the new links inferred via the FEED method or from the
+# database to the original PKN
 
 # Inputs:
 # Mandatory:  A cnolist object containing the data (cnolist)
@@ -76,7 +70,7 @@ integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, compr
     returnModel[[length(returnModel)+1]] = speciesDiffIdx
     returnModel[[length(returnModel)+1]] = rep(0, length(currModel$reacID))
     
-    names(returnModel) = c("model", "integLinksIdx", "integSpeciesIdx", "databasePenalty")
+    names(returnModel) = c("model", "integLinksIdx", "integSpeciesIdx", "databaseWeight")
     
     return(returnModel)
     
@@ -136,7 +130,7 @@ integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, compr
     returnModel[[length(returnModel)+1]] = which(temp$namesSpecies%in%setdiff(temp$namesSpecies, model$namesSpecies))
     returnModel[[length(returnModel)+1]] = currModel$weights
     
-    names(returnModel) = c("model", "integLinksIdx", "integSpeciesIdx", "databasePenalty")
+    names(returnModel) = c("model", "integLinksIdx", "integSpeciesIdx", "databaseWeight")
     
     return(returnModel)
     

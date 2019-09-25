@@ -10,7 +10,7 @@
 }
 
 \usage{
-feederObject = buildFeederObjectDynamic(model = model, cnolist = cnolist, indices = indices, database = database, pathLength = 2, DDN = TRUE, k = 2, measErr = c(0.1, 0))
+buildFeederObjectDynamic(model = model, cnolist = cnolist, indices = indices, database = database, pathLength = 2, DDN = TRUE, k = 2, measErr = c(0.1, 0))
 }
 
 

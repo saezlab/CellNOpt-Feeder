@@ -297,10 +297,10 @@ runDynamicFeeder <- function(cnolist = cnolist, integratedModel = integratedMode
       ss = strsplit(x = ode_parameters$parNames[ode_parameters$index_k[ii]], split = "_k_", fixed = TRUE)[[1]][1]
       tt = strsplit(x = ode_parameters$parNames[ode_parameters$index_k[ii]], split = "_k_", fixed = TRUE)[[1]][2]
       idx = which(model$reacID%in%c(paste0(ss, "=", tt), paste0("!", ss, "=", tt)))[1]
-      if(is.infinite(integratedModel$databasePenalty[idx])){
+      if(is.infinite(integratedModel$databaseWeight[idx])){
         lambda_k[ii] = penFactor_k
       } else {
-        lambda_k[ii] = penFactorPIN_k*(1+integratedModel$databasePenalty[idx])
+        lambda_k[ii] = penFactorPIN_k*(1+integratedModel$databaseWeight[idx])
       }
     }
   }
