@@ -21,15 +21,19 @@
 # Mandatory:  A cnolist object containing the data (cnolist)
 #             A model to optimize (model)
 #             An indices object (i.e. as returned from computeMSE.R function) indicating poor fits
-# Optional:   A path length parameter for the maximal path length of additional interactions (pathLength = 4 by default)
-#             A path length parameter for the maximal path length of additional interactions between the cues (cuesPathLength = 4 by default)
-#             A loop length parameter for the inference of feedback mechanisms (loopLength = NULL by default)
+# Optional:   A path length parameter for the maximal path length of additional interactions (pathLength = 3 by default)
 #             A database of interactions
 #             A 2 value vector (err1, err2) defining the error model of the data as sd^2 = err1^2 + (err2*data)^2, default to c(0.1, 0)
 #             A parameter that determine the threshold of significancy of the effect of stimuli and inhibitors, default to 2
 
 buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices = indices, database = NULL, DDN = TRUE,
                                      pathLength = 3, k = 2, measErr = c(0.1, 0)){
+  
+  ##
+  # Intial checks
+  if(is.null(database) && DDN==FALSE){
+    stop("You should either allow data-driven inference or make use of a database of interactions or both in order to integrate the new links in the PKN!")
+  }
   
   ##
   # Identifying all the erroneous measurements
