@@ -33,15 +33,30 @@ integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, datab
   model <- readSIF(sifFile = "temporary_sif.txt")
   file.remove("temporary_sif.txt")
   
-  for(ii in 1:length(object$`Feed mechanisms`)){
+  if(length(object$`Feed mechanisms`) > 0){
     
-    sif <- unique(rbind(sif, object$`Feed mechanisms`[[ii]]))
+    feedInt = c()
+    for(ii in 1:length(object$`Feed mechanisms`)){
+      
+      sif <- unique(rbind(sif, object$`Feed mechanisms`[[ii]]))
+      
+      for(jj in 1:nrow(object$`Feed mechanisms`[[ii]])){
+        
+        if(object$`Feed mechanisms`[[ii]][jj, 2]=="1"){
+          feedInt = c(feedInt, paste0(object$`Feed mechanisms`[[ii]][jj, 1], "=", object$`Feed mechanisms`[[ii]][jj, 3]))
+        } else {
+          feedInt = c(feedInt, paste0("!", object$`Feed mechanisms`[[ii]][jj, 1], "=", object$`Feed mechanisms`[[ii]][jj, 3]))
+        }
+        
+      }
+      
+    }
+    
+    write.table(x = sif, file = "temporary_sif.txt", quote = FALSE, sep = " ", row.names = FALSE, col.names = FALSE)
+    currModel <- readSIF(sifFile = "temporary_sif.txt")
+    file.remove("temporary_sif.txt")
     
   }
-  
-  write.table(x = sif, file = "temporary_sif.txt", quote = FALSE, sep = " ", row.names = FALSE, col.names = FALSE)
-  currModel <- readSIF(sifFile = "temporary_sif.txt")
-  file.remove("temporary_sif.txt")
   
   caseCNO <- cnolist
   
@@ -68,7 +83,9 @@ integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, datab
     returnModel[[length(returnModel)+1]] = currModel
     returnModel[[length(returnModel)+1]] = reacDiffIdx
     returnModel[[length(returnModel)+1]] = speciesDiffIdx
-    returnModel[[length(returnModel)+1]] = rep(0, length(currModel$reacID))
+    weightVec = rep(0, length(currModel$reacID))
+    weightVec[which(currModel$reacID%in%feedInt)] = Inf
+    returnModel[[length(returnModel)+1]] = weightVec
     
     names(returnModel) = c("model", "integLinksIdx", "integSpeciesIdx", "databaseWeight")
     
