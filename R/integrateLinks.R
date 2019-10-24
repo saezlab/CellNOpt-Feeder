@@ -22,7 +22,7 @@
 #             A model to optimize (model)
 #             A feeder object as returned by buildFeederObjectDynamic.R function
 
-integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, database = NULL){
+integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, compression = FALSE, expansion = FALSE, database = NULL){
   
   # optimizing all the added interactions together
   object = feederObject
@@ -47,7 +47,7 @@ integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, datab
   
   if(is.null(database) || ncol(database)<=3){
     
-    currModel <- preprocessing(data = caseCNO, model = currModel, compression = FALSE, expansion = FALSE)
+    currModel <- preprocessing(data = caseCNO, model = currModel, compression = compression, expansion = expansion)
     curr_sif = model2sif(model = currModel)
     idx2rem = which(duplicated(x = curr_sif[, c(1, 3)]))
     if(length(idx2rem) > 0){
@@ -121,7 +121,7 @@ integrateLinks <- function(feederObject = feederObject, cnolist = cnolist, datab
       
     }
     
-    currModel = preprocessingWeighted(data = caseCNO, model = currModel, compression = FALSE, expansion = FALSE, weights = weights, weightsID = weightsID)
+    currModel = preprocessingWeighted(data = caseCNO, model = currModel, compression = compression, expansion = expansion, weights = weights, weightsID = weightsID)
     
     returnModel = list()
     temp = currModel$model
