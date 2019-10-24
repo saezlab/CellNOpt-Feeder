@@ -10,15 +10,13 @@
 }
 
 \usage{
-integrateLinks(feederObject = feederObject, cnolist = cnolist, compression = FALSE, expansion = FALSE, database = database)
+integrateLinks(feederObject = feederObject, cnolist = cnolist, database = database)
 }
 
 
 \arguments{
   \item{feederObject}{a feederObject structure, as produced by \link{buildFeederObjectDynamic}}
   \item{cnolist}{a cnolist structure, as produced by \link{makeCNOlist}}
-  \item{compression}{a parameter indicating whether to compress the integrated model. Default: compression = FALSE}
-  \item{expansion}{a parameter indicating whether to expand the integrated model. Default: expansion = FALSE}
   \item{database}{a database of interactions which can be optionally provided as an interaction matrix with 3 or 4 colums (source of interaction, sign of interaction, target of interaction and optionally a weight value from 0 to 1 indicating the significance of that interaction in the database). Default: database=NULL}
 }
 

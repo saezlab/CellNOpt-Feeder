@@ -37,6 +37,7 @@ function(CueDown, SigUp, model, Sign){
     model$interMat <- cbind(model$interMat,tmp)
   }
       
+  
   colnames(model$interMat) <- model$reacID
   colnames(model$notMat) <- model$reacID
       

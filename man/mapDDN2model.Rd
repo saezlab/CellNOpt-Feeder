@@ -52,6 +52,7 @@ DDN<-Binference(CNOlistDREAM, tempCheckOrders=10, maxIter=100,
                 filename="BAYESIAN")
 
 modelIntegr<-mapDDN2model(DDN=DDN,model=model,CNOlist=CNOlistDREAM)
+ 
 }
 
 }
