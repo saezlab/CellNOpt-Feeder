@@ -14,7 +14,8 @@
 ##############################################################################
 ## Enio Gjerga - 17/01/2017
 
-preprocessingWeighted<-function(data=NULL, model, cutNONC=TRUE, ignoreList=NA, maxInputsPerGate=2,verbose=FALSE, weights, weightsID){
+preprocessingWeighted<-function(data=NULL, model, cutNONC=TRUE, ignoreList=NA, maxInputsPerGate=2,
+                                compression = compression, expansion = expansion, verbose=FALSE, weights, weightsID){
   
   # why not doing this check here ? Does not cost too much
   if (is.null(data)!=TRUE){
