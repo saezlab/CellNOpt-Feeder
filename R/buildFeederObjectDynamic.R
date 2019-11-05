@@ -27,7 +27,7 @@
 #             A parameter that determine the threshold of significancy of the effect of stimuli and inhibitors, default to 2
 
 buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices = indices, database = NULL, DDN = TRUE,
-                                     pathLength = 3, k = 2, measErr = c(0.1, 0)){
+                                     pathLength = 3, k = 2, measErr = c(0.1, 0), timePoint = NA){
   
   ##
   # Intial checks
@@ -41,7 +41,8 @@ buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices =
   
   ##
   # Identifying the interactions from the FEED algorithm
-  BTable <- makeBTables(CNOlist=cnolist, k=k, measErr=measErr)
+  # BTable <- makeBTables(CNOlist=cnolist, k=k, measErr=measErr)
+  BTable <- makeBTables(CNOlist = cnolist, k = k, measErr = measErr, timePoint = timePoint)
   for(ii in 1:length(BTable$tables)){
     currMeas = names(BTable$tables)[ii]
     if(!(currMeas%in%indMeas)){
