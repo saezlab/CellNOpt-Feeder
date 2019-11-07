@@ -61,8 +61,8 @@ buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices =
   reactions = modelIntegr$reacID[modelIntegr$indexIntegr]
   reacTable = matrix(data = , nrow = length(reactions), ncol = 2)
   for(ii in 1:length(reactions)){
-    reacTable[ii, 1] = strsplit(x = reactions[ii], split = "=", fixed = TRUE)[[1]][1]
-    reacTable[ii, 2] = strsplit(x = reactions[ii], split = "=", fixed = TRUE)[[1]][2]
+    reacTable[ii, 1] = gsub(pattern = "!", replacement = "", x = strsplit(x = reactions[ii], split = "=", fixed = TRUE)[[1]][1])
+    reacTable[ii, 2] = gsub(pattern = "!", replacement = "", x = strsplit(x = reactions[ii], split = "=", fixed = TRUE)[[1]][2])
   }
   
   if(!is.null(database)){
