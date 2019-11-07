@@ -240,6 +240,17 @@ When the integrated network is trained to the data, the model which best describ
 \end{center}
 \end{figure*}
 
+\clearpage
+
+\section{Dynamic Feeder}
+
+Dynamic-Feeder represents an extension of the CNORfeeder implementation described in the chapters above by inferring new possible functional interactions missing in the PKN for dynamic models casted as logic-based Ordinary Differential Equations (ODEs) from time-series data. Below Figure \ref{fig:dyn_pipeline}, we show a step by-step summary of the Dynamic-Feeder pipeline and apply it to a small toy example.
+
+\begin{figure*}
+\centerline{\includegraphics[width=\textwidth]{Dynamic-Feeder-Pipeline.pdf}}
+\caption{\emph{Dynamic-Feeder}pipeline.}
+\label{fig:dyn_pipeline}
+\end{figure*}
 
 
 \clearpage
