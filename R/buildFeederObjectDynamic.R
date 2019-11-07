@@ -136,6 +136,10 @@ buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices =
       
     }
     
+    if(length(sP_all)==0){
+      stop("There cannot be found interactions from the database for the used settings. Please either change the settings or set database = NULL")
+    }
+    
     ##
     # now creating the feedInteractions list containing the signed interactions between the species
     feedInteractions <- list()
