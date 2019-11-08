@@ -49,20 +49,20 @@ please refer to \url{http://www.r-project.org/}.   For more information about
 how to install R packages, please refer to
 \url{http://cran.r-project.org/doc/manuals/R-admin.html#Installing-packages}.
 This package relies on several Bioconductor packages (CellNOptR, RBGL, graph, minet) and CRAN packages (igraph catnet). The following code installs the \emph{CNORfeeder} dependencies and suggested packages that are on Bioconductor website, open an R session and type:
-<<installBio, eval=FALSE>>=
+<<installBio, eval=TRUE>>=
 source("http://bioconductor.org/biocLite.R")
 biocLite(c("RBGL","graph","minet","CellNOptR","igraph","catnet"))
 @
 
 Before starting this tutorial you also need to install the package
 \emph{CNORfeeder}. You can either install \emph{CNORfeeder} from Bioconductor by typing:
-<<installPackage, eval=FALSE>>=
+<<installPackage, eval=TRUE>>=
 source("http://bioconductor.org/biocLite.R")
 biocLite("CNORfeeder")
 @
 
 or from a tar ball as follows:
-<<installPackage2, eval=FALSE>>=
+<<installPackage2, eval=TRUE>>=
 install.packages("path_to_CNORfeeder/CNORfeeder_1.0.0.tar.gz",
     repos=NULL, type="source")
 @
@@ -193,7 +193,7 @@ This function return the same model with an additional field that is the weight 
 
 Information derived from protein-protein networks (PIN) can also be used to differently prioritize integrated links, with the basic idea that a shorter path in the PIN corresponds to a more reliable link in the PKN. A PIN (PPINigraph) is provided with the package and can be passed to the \emph{PPI} attribute, as shown in the example, in order to differently weight links (note that Uniprot IDs must be provided, see \emph{UniprotIDdream} as an example of the list structure to be used).
 
-<<weightPPI, eval=FALSE>>=
+<<weightPPI, eval=TRUE>>=
 data(PPINigraph,package="CNORfeeder")
 data(UniprotIDdream,package="CNORfeeder")
 modelIntegrWeight <- weighting(modelIntegr=modelIntegr, PKNmodel=DreamModel,
@@ -276,7 +276,7 @@ plotModel(model = model, CNOlist = cnolist)
 
 After reading the example, we perform an initial training of the model in the ODE formalism after first setting the optimization parameters.
 
-<<results, eval=FALSE, results=hide>>=
+<<results, eval=TRUE, results=hide>>=
 # Setting the optimization parameters
 ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
                                    LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
