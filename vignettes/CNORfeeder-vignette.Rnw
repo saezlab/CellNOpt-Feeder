@@ -278,9 +278,10 @@ After reading the example, we perform an initial training of the model in the OD
 
 <<results, eval=FALSE, results=hide>>=
 # Setting the optimization parameters
-ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
-                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
-                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0, 
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, 
+                                   UB_tau = 1, default_n = 3, default_k = 0.5, 
+                                   default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
                                    opt_tau = TRUE, random = TRUE)
 
 paramsSSm=defaultParametersSSm()
@@ -303,8 +304,10 @@ paramsSSm$SSpenalty_fac=0
 paramsSSm$SScontrolPenalty_fac=0
 
 # Training of the initial model
-opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_parameters, paramsSSm=paramsSSm)
-simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, transfer_function = 4)
+opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_parameters, 
+                            paramsSSm=paramsSSm)
+simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, 
+                           transfer_function = 4)
 @
 
 \clearpage
