@@ -276,7 +276,7 @@ plotModel(model = model, CNOlist = cnolist)
 
 After reading the example, we perform an initial training of the model in the ODE formalism after first setting the optimization parameters.
 
-<<results, eval=TRUE, results=hide>>=
+<<results, eval=FALSE, results=hide>>=
 # Setting the optimization parameters
 ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
                                    LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
