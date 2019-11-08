@@ -248,6 +248,8 @@ Dynamic-Feeder represents an extension of the CNORfeeder implementation describe
 
 Through the figure below \ref{fig:dyn_pipeline}, we show a step by-step summary of the Dynamic-Feeder pipeline and apply it to a small toy example.
 
+\clearpage
+
 \begin{figure*}
 \centerline{\includegraphics[width=\textwidth]{Dynamic-Feeder-Pipeline.pdf}}
 \caption{\emph{Dynamic-Feeder} pipeline.}
