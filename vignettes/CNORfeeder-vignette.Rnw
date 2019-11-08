@@ -246,9 +246,66 @@ When the integrated network is trained to the data, the model which best describ
 
 Dynamic-Feeder represents an extension of the CNORfeeder implementation described in the chapters above by inferring new possible functional interactions missing in the PKN for dynamic models casted as logic-based Ordinary Differential Equations (ODEs) from time-series data. 
 
-Through the figure below \ref{fig:dyn_pipeline}, we show a step by-step summary of the Dynamic-Feeder pipeline and apply it to a small toy example.
+Through the figure below \ref{fig:dyn_pipeline}, we show a step by-step summary of the Dynamic-Feeder pipeline and apply it to a small toy example \cite{macnamara} which was generated manually based on the network contained in \cite{saez_rodriguez_2011}. This network was designed to output a variety of dynamics (oscillations, transience etc.).
 
-\subsection{A. loading the toy example}
+\subsection{Loading the toy example}
+
+Loading the necessary packages and the toy example containing 28 interactions and 28 species (of which 2 are stimulated, 2 are inhibited and 6 are measrued). Data was generated across each measuremnt at each perturbation experimental condition for 60 time-points.
+
+<<results, eval=TRUE, results=hide>>=
+# loading the necessary packages
+library(CellNOptR)
+library(MEIGOR)
+library(CNORode)
+library(doParallel)
+library(readr)
+library(infotheo)
+library(igraph)
+library(OmnipathR)
+library(CNORfeeder)
+
+# loading the model
+data("ToyModelPB", package="CNORfeeder")
+# loading the data
+data("ToyModelPBCNOlist", package="CNORfeeder")
+# plotting the model
+plotModel(model = model, CNOlist = cnolist)
+@
+
+\subsection{Training of the model}
+
+After reading the example, we perform an initial training of the model in the ODE formalism after first setting the optimization parameters.
+
+<<results, eval=TRUE, results=hide>>=
+# Setting the optimization parameters
+ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+                                   opt_tau = TRUE, random = TRUE)
+
+paramsSSm=defaultParametersSSm()
+paramsSSm$local_solver = "DHC"
+paramsSSm$maxtime = 3600;
+paramsSSm$maxeval = Inf;
+paramsSSm$atol=1e-6;
+paramsSSm$reltol=1e-6;
+paramsSSm$nan_fac=1000;
+paramsSSm$dim_refset=30;
+paramsSSm$n_diverse=1000;
+paramsSSm$maxStepSize=Inf;
+paramsSSm$maxNumSteps=10000;
+paramsSSm$transfer_function = 4;
+
+paramsSSm$lambda_tau=0.1
+paramsSSm$lambda_k=0.01
+paramsSSm$bootstrap=F
+paramsSSm$SSpenalty_fac=0
+paramsSSm$SScontrolPenalty_fac=0
+
+# Training of the initial model
+opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_parameters, paramsSSm=paramsSSm)
+simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, transfer_function = 4)
+@
 
 \clearpage
 
@@ -294,6 +351,16 @@ F. Eduati, A. Corradin, B. Di Camillo, G. Toffolo.
 P. E. Meyer, F. Lafitte, G. Bontempi
 \newblock MINET: An open source R/Bioconductor package for mutual information based network inference. 
 \newblock {\em BMC bioinformatics}, 9(1), 2008.
+
+\bibitem{macnamara}
+A. MacNamara, C. Terfve, D. Henriques, B.P. Bernabe, J. Saez-Rodriguez
+\newblock State-time spectrum of signal transduction logic models Physical Biology. 
+\newblock {\em Phys Biol.}, 9(4):045003, 2012.
+
+\bibitem{saez_rodriguez_2011}
+J. Saez-Rodriguez, L.G. Alexoupulos, M. Zhang, M.K. Morris, D.A. Lauffenburger, P.K. Sorger
+\newblock Comparing signaling networks between normal and transformed hepatocytes using discrete logical models. 
+\newblock {\em Cancer Res.}, 15;71(16):5400-11, 2011.
 
 
 \end{thebibliography}
