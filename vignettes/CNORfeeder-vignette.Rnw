@@ -252,7 +252,7 @@ Through the figure below \ref{fig:dyn_pipeline}, we show a step by-step summary 
 
 Loading the necessary packages and the toy example containing 28 interactions and 28 species (of which 2 are stimulated, 2 are inhibited and 6 are measrued). Data was generated across each measuremnt at each perturbation experimental condition for 60 time-points.
 
-<<results, eval=FALSE, results=hide>>=
+<<results, eval=TRUE, results=hide>>=
 # loading the necessary packages
 library(CellNOptR)
 library(MEIGOR)
