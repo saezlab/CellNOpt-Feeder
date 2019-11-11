@@ -302,7 +302,7 @@ database[, 3] = interactions$target_genesymbol
 
 Now, we perform the initial ODE analysis and generate the simulation results of our optimized model:
 
-<<results, eval=TRUE, results=hide>>=
+<<results, eval=FALSE, results=hide>>=
 # set initial parameters (here parameters 'k' and 'tau' are optimised and 'n' fixed to 3)
 ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
                                    LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
