@@ -316,7 +316,7 @@ database[, 3] = interactions$target_genesymbol
 Now, we perform the initial ODE analysis and generate the simulation results of our optimized model:
 
 <<results, eval=FALSE, results=hide>>=
-# set initial parameters (here parameters 'k' and 'tau' are optimised and 'n' fixed to 3)
+# set initial parameters (here parameters k and tau are optimised and n fixed to 3)
 ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
                                    LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
                                    default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
@@ -365,7 +365,7 @@ As we can notice, our model performs worse for the NFKB1 measurement when EGF an
 indices = identifyMisfitIndices(cnolist = cnolist, model = model, simData = simData, mseThresh = 0.05)
 @
 
-The \emph{indices} object which is returned represents a list of indices telling which measurement and at which experimental condition is poorly predicted by our model. It also contains an \emph{mse} matrix indicating the mis-fit between our initial model predictions for each observation (quantifide by the Mean Squared Error value).
+The \emph{indices} object which is returned represents a list of indices telling which measurement and at which experimental condition is poorly predicted by our model. It also contains an \emph{mse} matrix indicating the misfit between our initial model predictions for each observation (quantifide by the Mean Squared Error value).
 
 \subsection{D. Integration}
 
@@ -450,7 +450,7 @@ J.~Saez-Rodriguez, L.~Alexopoulos, J.~Epperlein, R.~Samaga, D.~Lauffenburger, S.
 \newblock {\em Molecular Systems Biology}, 5:331, 2009.
 
 \bibitem{CellNOptR}
-C. Terfve, T. Cokelaer, D. Henriques, A. MacNamara, E. Goncalves, M. K. Morris, M. van Iersel, D. A. Lauffenburger, J. Saez-Rodrigues.
+C. Terfve, T. Cokelaer, D. Henriques, A. MacNamara, E. Goncalves, M. K. Morris, M. van Iersel, D. A. Lauffenburger, J. Saez-Rodriguez.
 \newblock CellNOptR: a flexible toolkit to train protein signaling networks to data using multiple logic formalisms.
 \newblock {\em BMC Syst Biol}, 6:133, 2012.
 
@@ -475,9 +475,9 @@ J. Saez-Rodriguez, L.G. Alexoupulos, M. Zhang, M.K. Morris, D.A. Lauffenburger, 
 \newblock {\em Cancer Res.}, 15;71(16):5400-11, 2011.
 
 \bibitem{omnipath}
-  D. Turei, T. Korcsmáros, J. Saez-Rodriguez.
+  D. Turei, T. Korcsmaros, J. Saez-Rodriguez.
 \newblock OmniPath: guidelines and gateway for literature-curated signaling pathway resources.
-\newblock {\em Nature Methods}, 13, pages966–967 2016.
+\newblock {\em Nature Methods}, 13, pages966 967 2016.
 
 
 \end{thebibliography}
