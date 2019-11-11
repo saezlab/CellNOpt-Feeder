@@ -248,11 +248,21 @@ Dynamic-Feeder represents an extension of the CNORfeeder implementation describe
 
 Through the figure below \ref{fig:dyn_pipeline}, we show a step by-step summary of the Dynamic-Feeder pipeline and apply it to a small toy example \cite{macnamara} which was generated manually based on the network contained in \cite{saez_rodriguez_2011}. This network was designed to output a variety of dynamics (oscillations, transience etc.).
 
+\begin{figure*}
+\centerline{\includegraphics[width=\textwidth]{Dynamic-Feeder-Pipeline.pdf}}
+\caption{\emph{Dynamic-Feeder} pipeline.}
+\label{fig:dyn_pipeline}
+\end{figure*}
+
+
+\clearpage
+
+
 \subsection{A. Loading the toy example and performing the initial ODE analysis}
 
 Loading the necessary packages and the toy example containing 16 interactions and 15 species (of which 2 are stimulated, 2 are inhibited and 7 are measrued). Data was generated in-silico across each measuremnt at each perturbation experimental condition for 3 time-points (0, 10, 30).
 
-<<results, eval=FALSE, results=hide>>=
+<<results, eval=TRUE, results=hide>>=
 # loading the necessary packages
 library(CellNOptR)
 library(MEIGOR)
@@ -265,13 +275,15 @@ library(OmnipathR)
 library(CNORfeeder)
 
 # loading the model
-data("ToyModel_Gene.RData", package="CNORfeeder")
+data(ToyModel_Gene, package="CNORfeeder")
 # loading the data
-data("CNOlistToy_Gene.RData", package="CNORfeeder")
+data(CNOlistToy_Gene, package="CNORfeeder")
 # plotting the model and the data
 plotModel(model = model, CNOlist = cnolist)
 plotCNOlist(CNOlist = cnolist)
 @
+
+\clearpage
 
 \begin{figure*}[!htbp]
 \begin{center}
@@ -289,7 +301,10 @@ Optionally, the user can load pathway resources. Below, we show how we can load 
 
 <<results, eval=FALSE, results=hide>>=
 # loading database and retaining only activatory/inhibitory interactions
-interactions <- import_Omnipath_Interactions(filter_databases=c("SignaLink3","PhosphoSite", "Signor"))
+interactions <- import_Omnipath_Interactions(filter_databases=
+                                               c("SignaLink3",
+                                                 "PhosphoSite", 
+                                                 "Signor"))
 interactions = interactions[which(interactions$is_stimulation+interactions$is_inhibition==1), ]
 database = matrix(data = , nrow = nrow(interactions), ncol = 3)
 database[, 1] = interactions$source_genesymbol
@@ -297,7 +312,7 @@ database[which(interactions$is_stimulation==1), 2] = "1"
 database[which(interactions$is_inhibition==1), 2] = "-1"
 database[, 3] = interactions$target_genesymbol
 
-# Alternatively: data("database.RData", package="CNORfeeder")
+# Alternatively: data(database, package="CNORfeeder")
 @
 
 Now, we perform the initial ODE analysis and generate the simulation results of our optimized model:
@@ -373,17 +388,6 @@ opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_pa
 simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, 
                            transfer_function = 4)
 @
-
-\clearpage
-
-\begin{figure*}
-\centerline{\includegraphics[width=\textwidth]{Dynamic-Feeder-Pipeline.pdf}}
-\caption{\emph{Dynamic-Feeder} pipeline.}
-\label{fig:dyn_pipeline}
-\end{figure*}
-
-
-\clearpage
 
 \begin{thebibliography}{1}
 
