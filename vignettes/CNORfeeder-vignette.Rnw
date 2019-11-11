@@ -283,8 +283,6 @@ plotModel(model = model, CNOlist = cnolist)
 plotCNOlist(CNOlist = cnolist)
 @
 
-\clearpage
-
 \begin{figure*}[!htbp]
 \begin{center}
 \begin{tabular}{cc}
@@ -297,7 +295,7 @@ plotCNOlist(CNOlist = cnolist)
 \end{center}
 \end{figure*}
 
-Optionally, the user can load pathway resources. Below, we show how we can load from \emph{OmniPath} (by using \emph{OmniPathR} package) interactions from three other resources: \emph{SignaLink3}, \emph{PhosphoSite} and \emph{Signor}. We only retain those directed interactions which either are activatory or inhibitory. Besides the resource, users can choose to have interactions based on number of references, resources, etc. For more about this, please visit https://github.com/saezlab/OmnipathR.
+Optionally, the user can load pathway resources. Below, we show how we can load from \emph{OmniPath} \cite{omnipath} (by using \emph{OmniPathR} package) interactions from three other resources: \emph{SignaLink3}, \emph{PhosphoSite} and \emph{Signor}. We only retain those directed interactions which either are activatory or inhibitory. Besides the resource, users can choose to have interactions based on number of references, resources, etc. For more about this, please visit https://github.com/saezlab/OmnipathR.
 
 <<results, eval=FALSE, results=hide>>=
 # loading database and retaining only activatory/inhibitory interactions
@@ -350,44 +348,87 @@ opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_pa
 simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, transfer_function = 4)
 @
 
+The figure below \ref{fig:initial_fit} shows how our optimized model fits the data.
 
-\subsection{Training of the model}
+\begin{figure*}
+\centerline{\includegraphics[width=\textwidth]{initial-fit.pdf}}
+\caption{\emph{Initial Fit}}
+\label{fig:initial_fit}
+\end{figure*}
 
-After reading the example, we perform an initial training of the model in the ODE formalism after first setting the optimization parameters.
+\subsection{C. Identifying poorly-fitted measurements}
+
+As we can notice, our model performs worse for the NFKB1 measurement when EGF and PIK3CA are being perturbed. As a next step, we then try to identify poorly-fitted measurements. A measurement is considered as poorly-fitted on a specific experimental condition, if the deviation between experimental data and prediction of the initial model is higher than a threshold parameter \emph{mseThresh} which can be controlled by the user. On this case we have:
 
 <<results, eval=FALSE, results=hide>>=
-# Setting the optimization parameters
-ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0, 
-                                   LB_tau = 0, UB_n = 3, UB_k = 1, 
-                                   UB_tau = 1, default_n = 3, default_k = 0.5, 
-                                   default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
-                                   opt_tau = TRUE, random = TRUE)
-
-paramsSSm=defaultParametersSSm()
-paramsSSm$local_solver = "DHC"
-paramsSSm$maxtime = 3600;
-paramsSSm$maxeval = Inf;
-paramsSSm$atol=1e-6;
-paramsSSm$reltol=1e-6;
-paramsSSm$nan_fac=1000;
-paramsSSm$dim_refset=30;
-paramsSSm$n_diverse=1000;
-paramsSSm$maxStepSize=Inf;
-paramsSSm$maxNumSteps=10000;
-paramsSSm$transfer_function = 4;
-
-paramsSSm$lambda_tau=0.1
-paramsSSm$lambda_k=0.01
-paramsSSm$bootstrap=F
-paramsSSm$SSpenalty_fac=0
-paramsSSm$SScontrolPenalty_fac=0
-
-# Training of the initial model
-opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_parameters, 
-                            paramsSSm=paramsSSm)
-simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, 
-                           transfer_function = 4)
+# Identifying the mis-fits (measurements with mse worse than 0.05)
+indices = identifyMisfitIndices(cnolist = cnolist, model = model, simData = simData, mseThresh = 0.05)
 @
+
+The \emph{indices} object which is returned represents a list of indices telling which measurement and at which experimental condition is poorly predicted by our model. It also contains an \emph{mse} matrix indicating the mis-fit between our initial model predictions for each observation (quantifide by the Mean Squared Error value).
+
+\subsection{D. Integration}
+
+After identifying the poorly-fitted measurements, we then try to find possible links between corresponding cues and measurements and which can potentially identify mising mechanisms which yielded the poor prediction. The user can either do a search from the \emph{database} object, derivel the links from data-alone based on the \emph{FEED} algorithm, or both. Below we show an example about how we can infer interactions from both approaches and show the new expanded PKN with newly integrated links colored in purple \ref{fig:feeder_model}:
+
+<<results, eval=FALSE, results=hide>>=
+# interactions from the database and from the FEED algorithm which we want to integrate
+feederObject = buildFeederObjectDynamic(model = model, cnolist = cnolist, 
+                                        indices = indices, database = database, 
+                                        DDN = TRUE, pathLength = 2) # max path-length of 2 for database search
+
+integratedModel = integrateLinks(feederObject = feederObject, cnolist = cnolist, database = database)
+
+plotModel(model = integratedModel$model, CNOlist = cnolist, indexIntegr = integratedModel$integLinksIdx)
+@
+
+\begin{figure*}
+\centerline{\includegraphics[width=\textwidth]{feeder-model.pdf}}
+\caption{\emph{Integrated Model}, newly integrated links shown in purple}
+\label{fig:feeder_model}
+\end{figure*}
+
+\subsection{D. Final fit}
+
+Finally, we then optimize the integrated PKN to data and observe the effects of the new links to the fit. In order to avoid overfitting, we penalize the new links with factors higher than the interactions which were already present on the PKN. We show this for two cases:
+
+1. By applying moderate penalty factors over the new links (200 times higher for interactions coming from \emph{FEED} \cite{CNORfeeder} and 10 times higher for interactions coming from \emph{database} compared to the weight applied over the interactions in the PKN) and nodes (10 times higher copared to the weight for the nodes present in the PKN) \ref{fig:post_fit_low}:
+
+<<results, eval=FALSE, results=hide>>=
+# interactions from the database and from the FEED algorithm which we want to integrate
+res1 = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel, 
+                        ode_parameters = ode_parameters, paramsSSm = paramsSSm,
+                        penFactor_k = 2, penFactorPIN_k = 0.1, penFactor_tau = 1)
+
+plotLBodeFitness(cnolist = res1$CNOList, model = res1$`Integrated-Model`$model, 
+                 ode_parameters = res1$Parameters, transfer_function = 4)
+@
+
+\begin{figure*}
+\centerline{\includegraphics[width=\textwidth]{post-fit-low.pdf}}
+\caption{Effects of the new links to the PKN}
+\label{fig:post_fit_low}
+\end{figure*}
+
+2. By applying very high penalty factors over the new links and nodes compared to the weights assigned to the species in the PKN \ref{fig:post_fit_high}:
+
+<<results, eval=FALSE, results=hide>>=
+# interactions from the database and from the FEED algorithm which we want to integrate
+res2 = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel, 
+                        ode_parameters = ode_parameters, paramsSSm = paramsSSm, 
+                        penFactor_k = 10000, penFactorPIN_k = 10000, penFactor_tau = 10000)
+
+plotLBodeFitness(cnolist = res2$CNOList, model = res2$`Integrated-Model`$model, 
+                 ode_parameters = res2$Parameters, transfer_function = 4)
+@
+
+\begin{figure*}
+\centerline{\includegraphics[width=\textwidth]{post-fit-high.pdf}}
+\caption{Effects of the new links to the PKN}
+\label{fig:post_fit_high}
+\end{figure*}
+
+We notice that for the case when we apply higher penalty factors, their effect over the overall fit get attenuated as it would be expected.
 
 \begin{thebibliography}{1}
 
@@ -432,6 +473,11 @@ A. MacNamara, C. Terfve, D. Henriques, B.P. Bernabe, J. Saez-Rodriguez
 J. Saez-Rodriguez, L.G. Alexoupulos, M. Zhang, M.K. Morris, D.A. Lauffenburger, P.K. Sorger
 \newblock Comparing signaling networks between normal and transformed hepatocytes using discrete logical models. 
 \newblock {\em Cancer Res.}, 15;71(16):5400-11, 2011.
+
+\bibitem{omnipath}
+  D. Turei, T. Korcsmáros, J. Saez-Rodriguez.
+\newblock OmniPath: guidelines and gateway for literature-curated signaling pathway resources.
+\newblock {\em Nature Methods}, 13, pages966–967 2016.
 
 
 \end{thebibliography}
