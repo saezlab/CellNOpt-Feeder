@@ -248,9 +248,9 @@ Dynamic-Feeder represents an extension of the CNORfeeder implementation describe
 
 Through the figure below \ref{fig:dyn_pipeline}, we show a step by-step summary of the Dynamic-Feeder pipeline and apply it to a small toy example \cite{macnamara} which was generated manually based on the network contained in \cite{saez_rodriguez_2011}. This network was designed to output a variety of dynamics (oscillations, transience etc.).
 
-\subsection{Loading the toy example}
+\subsection{A. Loading the toy example and performing the initial ODE analysis}
 
-Loading the necessary packages and the toy example containing 28 interactions and 28 species (of which 2 are stimulated, 2 are inhibited and 6 are measrued). Data was generated across each measuremnt at each perturbation experimental condition for 60 time-points.
+Loading the necessary packages and the toy example containing 16 interactions and 15 species (of which 2 are stimulated, 2 are inhibited and 7 are measrued). Data was generated in-silico across each measuremnt at each perturbation experimental condition for 3 time-points (0, 10, 30).
 
 <<results, eval=TRUE, results=hide>>=
 # loading the necessary packages
@@ -265,12 +265,76 @@ library(OmnipathR)
 library(CNORfeeder)
 
 # loading the model
-data("ToyModelPB", package="CNORfeeder")
+data("ToyModel_Gene.RData", package="CNORfeeder")
 # loading the data
-data("ToyModelPBCNOlist", package="CNORfeeder")
-# plotting the model
+data("CNOlistToy_Gene.RData", package="CNORfeeder")
+# plotting the model and the data
 plotModel(model = model, CNOlist = cnolist)
+plotCNOlist(CNOlist = cnolist)
 @
+
+\begin{figure*}[!htbp]
+\begin{center}
+\begin{tabular}{cc}
+    {\includegraphics[width=7.5cm]{initial-model}} 
+    &
+    {\includegraphics[width=8.5cm]{data}} \\
+\end{tabular}
+\caption[]{\emph{Left panel}: initial model. \emph{Right panel}: in-silico data.}
+\label{fig:training}
+\end{center}
+\end{figure*}
+
+Optionally, the user can load pathway resources. Below, we show how we can load from \emph{OmniPath} (by using \emph{OmniPathR} package) interactions from three other resources: \emph{SignaLink3}, \emph{PhosphoSite} and \emph{Signor}. We only retain those directed interactions which either are activatory or inhibitory. Besides the resource, users can choose to have interactions based on number of references, resources, etc. For more about this, please visit https://github.com/saezlab/OmnipathR.
+
+<<results, eval=FALSE, results=hide>>=
+# loading database and retaining only activatory/inhibitory interactions
+interactions <- import_Omnipath_Interactions(filter_databases=c("SignaLink3","PhosphoSite", "Signor"))
+interactions = interactions[which(interactions$is_stimulation+interactions$is_inhibition==1), ]
+database = matrix(data = , nrow = nrow(interactions), ncol = 3)
+database[, 1] = interactions$source_genesymbol
+database[which(interactions$is_stimulation==1), 2] = "1"
+database[which(interactions$is_inhibition==1), 2] = "-1"
+database[, 3] = interactions$target_genesymbol
+
+# Alternatively: data("database.RData", package="CNORfeeder")
+@
+
+Now, we perform the initial ODE analysis and generate the simulation results of our optimized model:
+
+<<results, eval=TRUE, results=hide>>=
+# set initial parameters (here parameters 'k' and 'tau' are optimised and 'n' fixed to 3)
+ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+                                   opt_tau = TRUE, random = TRUE)
+
+## Parameter Optimization
+# essm
+paramsSSm=defaultParametersSSm()
+paramsSSm$local_solver = "DHC"
+paramsSSm$maxtime = 60;
+paramsSSm$maxeval = Inf;
+paramsSSm$atol=1e-6;
+paramsSSm$reltol=1e-6;
+paramsSSm$nan_fac=1000;
+paramsSSm$dim_refset=30;
+paramsSSm$n_diverse=1000;
+paramsSSm$maxStepSize=Inf;
+paramsSSm$maxNumSteps=10000;
+paramsSSm$transfer_function = 4;
+
+paramsSSm$lambda_tau=0.1
+paramsSSm$lambda_k=0.01
+paramsSSm$bootstrap=F
+paramsSSm$SSpenalty_fac=0
+paramsSSm$SScontrolPenalty_fac=0
+
+## Training of the initial model
+opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_parameters, paramsSSm=paramsSSm)
+simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, transfer_function = 4)
+@
+
 
 \subsection{Training of the model}
 
