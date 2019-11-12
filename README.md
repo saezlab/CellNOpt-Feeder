@@ -31,7 +31,7 @@ CellNOpt-Feeder is currently available for the installation as an R-package from
 # Install CARNIVAL from Github using devtools
 # install.packages('devtools') # in case devtools hasn't been installed
 library(devtools)
-install_github('saezlab/CellNOpt-Feeder')
+install_github('saezlab/CellNOpt-Feeder', build_vignettes = TRUE)
 # or download the source file from GitHub and install from source
 install.packages('path_to_extracted_CellNOpt-Feeder-main_directory', repos = NULL, type="source")
 ```
