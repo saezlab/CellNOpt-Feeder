@@ -344,8 +344,10 @@ paramsSSm$SSpenalty_fac=0
 paramsSSm$SScontrolPenalty_fac=0
 
 ## Training of the initial model
-opt_pars=parEstimationLBode(cnolist, model, method="essm", ode_parameters=ode_parameters, paramsSSm=paramsSSm)
-simData = plotLBodeFitness(cnolist = cnolist, model = model, ode_parameters = opt_pars, transfer_function = 4)
+opt_pars=parEstimationLBode(cnolist, model, method="essm", 
+                            ode_parameters=ode_parameters, paramsSSm=paramsSSm)
+simData = plotLBodeFitness(cnolist = cnolist, model = model, 
+                           ode_parameters = opt_pars, transfer_function = 4)
 @
 
 The figure below \ref{fig:initial_fit} shows how our optimized model fits the data.
@@ -362,7 +364,8 @@ As we can notice, our model performs worse for the NFKB1 measurement when EGF an
 
 <<results, eval=FALSE, results=hide>>=
 # Identifying the mis-fits (measurements with mse worse than 0.05)
-indices = identifyMisfitIndices(cnolist = cnolist, model = model, simData = simData, mseThresh = 0.05)
+indices = identifyMisfitIndices(cnolist = cnolist, model = model, 
+                                simData = simData, mseThresh = 0.05)
 @
 
 The \emph{indices} object which is returned represents a list of indices telling which measurement and at which experimental condition is poorly predicted by our model. It also contains an \emph{mse} matrix indicating the misfit between our initial model predictions for each observation (quantifide by the Mean Squared Error value).
@@ -375,11 +378,14 @@ After identifying the poorly-fitted measurements, we then try to find possible l
 # interactions from the database and from the FEED algorithm which we want to integrate
 feederObject = buildFeederObjectDynamic(model = model, cnolist = cnolist, 
                                         indices = indices, database = database, 
-                                        DDN = TRUE, pathLength = 2) # max path-length of 2 for database search
+                                        DDN = TRUE, pathLength = 2) # max path-length=2 
+                                                                    # for database search
 
-integratedModel = integrateLinks(feederObject = feederObject, cnolist = cnolist, database = database)
+integratedModel = integrateLinks(feederObject = feederObject, cnolist = cnolist, 
+                                 database = database)
 
-plotModel(model = integratedModel$model, CNOlist = cnolist, indexIntegr = integratedModel$integLinksIdx)
+plotModel(model = integratedModel$model, CNOlist = cnolist, 
+          indexIntegr = integratedModel$integLinksIdx)
 @
 
 \begin{figure*}
