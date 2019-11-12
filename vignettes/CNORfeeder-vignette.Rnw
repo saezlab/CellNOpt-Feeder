@@ -358,7 +358,7 @@ The figure below \ref{fig:initial_fit} shows how our optimized model fits the da
 \label{fig:initial_fit}
 \end{figure*}
 
-\subsection{C. Identifying poorly-fitted measurements}
+\subsection{B. Identifying poorly-fitted measurements}
 
 As we can notice, our model performs worse for the NFKB1 measurement when EGF and PIK3CA are being perturbed. As a next step, we then try to identify poorly-fitted measurements. A measurement is considered as poorly-fitted on a specific experimental condition, if the deviation between experimental data and prediction of the initial model is higher than a threshold parameter \emph{mseThresh} which can be controlled by the user. On this case we have:
 
@@ -370,7 +370,7 @@ indices = identifyMisfitIndices(cnolist = cnolist, model = model,
 
 The \emph{indices} object which is returned represents a list of indices telling which measurement and at which experimental condition is poorly predicted by our model. It also contains an \emph{mse} matrix indicating the misfit between our initial model predictions for each observation (quantifide by the Mean Squared Error value).
 
-\subsection{D. Integration}
+\subsection{C. Integration}
 
 After identifying the poorly-fitted measurements, we then try to find possible links between corresponding cues and measurements and which can potentially identify mising mechanisms which yielded the poor prediction. The user can either do a search from the \emph{database} object, derivel the links from data-alone based on the \emph{FEED} algorithm, or both. Below we show an example about how we can infer interactions from both approaches and show the new expanded PKN with newly integrated links colored in purple \ref{fig:feeder_model}:
 
@@ -402,6 +402,11 @@ Finally, we then optimize the integrated PKN to data and observe the effects of 
 
 <<results, eval=FALSE, results=hide>>=
 # interactions from the database and from the FEED algorithm which we want to integrate
+ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, LB_k = 0,
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+                                   opt_tau = TRUE, random = TRUE)
+
 res1 = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel, 
                         ode_parameters = ode_parameters, paramsSSm = paramsSSm,
                         penFactor_k = 2, penFactorPIN_k = 0.1, penFactor_tau = 1)
@@ -420,6 +425,11 @@ plotLBodeFitness(cnolist = res1$CNOList, model = res1$`Integrated-Model`$model,
 
 <<results, eval=FALSE, results=hide>>=
 # interactions from the database and from the FEED algorithm which we want to integrate
+ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, LB_k = 0,
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+                                   opt_tau = TRUE, random = TRUE)
+
 res2 = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel, 
                         ode_parameters = ode_parameters, paramsSSm = paramsSSm, 
                         penFactor_k = 10000, penFactorPIN_k = 10000, penFactor_tau = 10000)
