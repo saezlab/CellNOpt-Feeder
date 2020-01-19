@@ -30,13 +30,14 @@ getFitW<-function(
      }
 
 	
-	# needed only for consistency between version 1.4 and following ones (following ones already cut the simList)
+	## needed only for consistency between version 1.4 and following ones 
+  ## (following ones already cut the simList)
 	if (dim(simResults)[2]!=length(indexList$signals)){
 		simResults<-simResults[,indexList$signals]
 	}
 
-    # for back compatibility, timePoint ca be "t1" or "t2" but developers should
-    # use an integer.
+    ## for back compatibility, timePoint ca be "t1" or "t2" but developers
+    ## should use an integer.
     if(timePoint == "t1"){
         tPt<-2
     }
@@ -50,10 +51,11 @@ getFitW<-function(
     }
 
 
-    # if t0 is provided and we are interested in t1
-    # then  score is based on t1 but also t0
+    ## if t0 is provided and we are interested in t1
+    ## then  score is based on t1 but also t0
     if (tPt == 2 && is.na(simResultsT0)==FALSE){
-		# needed only for consistency between version 1.4 and following ones (following ones already cut the simList)
+		## needed only for consistency between version 1.4 and following ones 
+    ## (following ones already cut the simList)
 		if (dim(simResultsT0)[2]!=length(indexList$signals)){
 			simResultsT0<-simResultsT0[,indexList$signals]
 		}
@@ -62,7 +64,7 @@ getFitW<-function(
 		Diff<-simResults-CNOlist@signals[[tPt]]
         r0<-Diff0^2
         r<-Diff^2
-        r <- rbind(r0, r) # we can concatenate because it's matricial computation.
+        r <- rbind(r0, r)
         deviationPen<-sum(r[!is.na(r)])/2
     }# otherwise, no need to take to into account
     else{
@@ -77,15 +79,16 @@ getFitW<-function(
     nDataPts<-dim(CNOlist@signals[[tPt]])[1]*dim(CNOlist@signals[[tPt]])[2]
 
     
-	# instead of this ...	
-	#nInputs<-length(which(model$interMat == -1))
-	#
+	## instead of this ...	
+	## nInputs<-length(which(model$interMat == -1))
+	##
     ## nInTot: number of inputs of expanded model
     ## nInputs: number of inputs of cut model
-    #sizePen<-(nDataPts*sizeFac*nInputs)/nInTot
+    ## sizePen<-(nDataPts*sizeFac*nInputs)/nInTot
 
-	# ... I am doing this ...	
-	# vector of the same length of the number of hyperedges with, in each position, a number indicating the number of inputs
+	## ... I am doing this ...	
+	## vector of the same length of the number of hyperedges with, in each 
+  ## position, a number indicating the number of inputs
 	nInputs<-as.vector(abs(apply(model$interMat,2,sum))+1)
 	sizePenVec<-nInputs*model$linksWeights
 	sizePen<-sum(sizePenVec)

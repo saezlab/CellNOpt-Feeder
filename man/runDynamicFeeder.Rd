@@ -39,3 +39,21 @@ this function returns a list with fields:
 \author{
     E.Gjerga
 }
+\examples{
+data(integratedModel_toy, package="CNORfeeder")
+data(CNOlistToy_Gene, package="CNORfeeder")
+data(simData_toy,package="CNORfeeder")
+
+paramsSSm=defaultParametersSSm()
+
+ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, LB_k = 0,
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+                                   opt_tau = TRUE, random = TRUE)
+                                   
+result = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel,
+                          ode_parameters = ode_parameters, paramsSSm = paramsSSm,
+                          penFactor_k = 2, penFactorPIN_k = 0.1, penFactor_tau = 1)
+                                  
+
+}
