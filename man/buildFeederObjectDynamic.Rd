@@ -38,3 +38,13 @@ this function returns a list with fields:
 \author{
     E.Gjerga
 }
+\examples{
+data(ToyModel_Gene, package="CNORfeeder")
+data(CNOlistToy_Gene, package="CNORfeeder")
+data(simData_toy,package="CNORfeeder")
+
+
+feederObject = buildFeederObjectDynamic(model = model, cnolist = cnolist,
+                                        indices = indices, database = database,
+                                        DDN = TRUE, pathLength = 2)
+}

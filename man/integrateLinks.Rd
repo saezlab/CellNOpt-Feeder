@@ -36,3 +36,11 @@ this function returns a list with fields:
 \author{
     E.Gjerga
 }
+\examples{
+data(feederObject_toy,package="CNORfeeder")
+data(CNOlistToy_Gene, package="CNORfeeder")
+data(CNOlistToy_Gene, package="CNORfeeder")
+
+integratedModel = integrateLinks(feederObject = feederObject, cnolist = cnolist,
+                                  database = database)
+}
