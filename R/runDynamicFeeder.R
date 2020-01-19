@@ -32,7 +32,8 @@
 runDynamicFeeder <- function(cnolist = cnolist, 
                              integratedModel = integratedModel, 
                              ode_parameters = ode_parameters,
-                             penFactor_k = 100, penFactor_tau = 1, 
+                             penFactor_k = 100, 
+                             penFactor_tau = 1, 
                              penFactorPIN_k = 10,
                              paramsSSm = defaultParametersSSm()){
   

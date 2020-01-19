@@ -298,19 +298,23 @@ plotCNOlist(CNOlist = cnolist)
 Optionally, the user can load pathway resources. Below, we show how we can load from \emph{OmniPath} \cite{omnipath} (by using \emph{OmniPathR} package) interactions from three other resources: \emph{SignaLink3}, \emph{PhosphoSite} and \emph{Signor}. We only retain those directed interactions which either are activatory or inhibitory. Besides the resource, users can choose to have interactions based on number of references, resources, etc. For more about this, please visit https://github.com/saezlab/OmnipathR.
 
 <<results, eval=FALSE, results=hide>>=
-# loading database and retaining only activatory/inhibitory interactions
-interactions <- import_Omnipath_Interactions(filter_databases=
-                                               c("SignaLink3",
-                                                 "PhosphoSite", 
-                                                 "Signor"))
-interactions = interactions[which(interactions$is_stimulation+interactions$is_inhibition==1), ]
-database = matrix(data = , nrow = nrow(interactions), ncol = 3)
-database[, 1] = interactions$source_genesymbol
-database[which(interactions$is_stimulation==1), 2] = "1"
-database[which(interactions$is_inhibition==1), 2] = "-1"
-database[, 3] = interactions$target_genesymbol
+## Loading database
+data(database, package="CNORfeeder")
+## Alternatively, users can download the database from Omnipath and retain only
+## activatory/inhibitory interactions as shown below.
+## Please note that OmniPath is in continuous update and new links are
+## continuously added
 
-# Alternatively: data(database, package="CNORfeeder")
+# interactions <- import_Omnipath_Interactions(filter_databases=
+#                                               c("SignaLink3",
+#                                               "PhosphoSite",
+#                                               "Signor"))
+# interactions = interactions[which(interactions$is_stimulation+interactions$is_inhibition==1), ]
+# database = matrix(data = , nrow = nrow(interactions), ncol = 3)
+# database[, 1] = interactions$source_genesymbol
+# database[which(interactions$is_stimulation==1), 2] = "1"
+# database[which(interactions$is_inhibition==1), 2] = "-1"
+# database[, 3] = interactions$target_genesymbol
 @
 
 Now, we perform the initial ODE analysis and generate the simulation results of our optimized model:
