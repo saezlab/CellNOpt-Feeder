@@ -26,13 +26,17 @@
 #             A 2 value vector (err1, err2) defining the error model of the data as sd^2 = err1^2 + (err2*data)^2, default to c(0.1, 0)
 #             A parameter that determine the threshold of significancy of the effect of stimuli and inhibitors, default to 2
 
-buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices = indices, database = NULL, DDN = TRUE,
-                                     pathLength = 3, k = 2, measErr = c(0.1, 0), timePoint = NA){
+buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, 
+                                     indices = indices, database = NULL, 
+                                     DDN = TRUE, pathLength = 3, k = 2, 
+                                     measErr = c(0.1, 0), timePoint = NA){
   
   ##
   # Intial checks
   if(is.null(database) && DDN==FALSE){
-    stop("You should either allow data-driven inference or make use of a database of interactions or both in order to integrate the new links in the PKN!")
+    stop("You should either allow data-driven inference or make use of a 
+         database of interactions or both in order to integrate the new links 
+         in the PKN!")
   }
   
   ##
@@ -42,27 +46,75 @@ buildFeederObjectDynamic <- function(model = model, cnolist = cnolist, indices =
   ##
   # Identifying the interactions from the FEED algorithm
   # BTable <- makeBTables(CNOlist=cnolist, k=k, measErr=measErr)
-  BTable <- makeBTables(CNOlist = cnolist, k = k, measErr = measErr, timePoint = timePoint)
-  for(ii in 1:length(BTable$tables)){
-    currMeas = names(BTable$tables)[ii]
-    if(!(currMeas%in%indMeas)){
-      for(jj in 1:nrow(BTable$tables[[ii]])){
-        for(kk in 1:ncol(BTable$tables[[ii]])){
-          
-          BTable$tables[[ii]][jj, kk] = 0
-          BTable$NotMatStim[[ii]][jj, kk] = 0
-          BTable$NotMatInhib[[ii]][jj, kk] = 0
-          
-        }
-      }
-    }
-  }
+  BTable <- makeBTables(CNOlist = cnolist, k = k, measErr = measErr, 
+                        timePoint = timePoint)
+  # for(ii in 1:length(BTable$tables)){
+  #   currMeas = names(BTable$tables)[ii]
+  #   if(!(currMeas%in%indMeas)){
+  #     for(jj in 1:nrow(BTable$tables[[ii]])){
+  #       for(kk in 1:ncol(BTable$tables[[ii]])){
+  #         
+  #         BTable$tables[[ii]][jj, kk] = 0
+  #         BTable$NotMatStim[[ii]][jj, kk] = 0
+  #         BTable$NotMatInhib[[ii]][jj, kk] = 0
+  #         
+  #       }
+  #     }
+  #   }
+  # }
+  
+  #doing integration with FEEDER
   modelIntegr <- mapBTables2model(BTable=BTable,model=model,allInter=TRUE)
+  integrSIF <- model2sif(modelIntegr)
+  
+  #now retaining only those interactions involving poorly fitted measurements
   reactions = modelIntegr$reacID[modelIntegr$indexIntegr]
   reacTable = matrix(data = , nrow = length(reactions), ncol = 2)
   for(ii in 1:length(reactions)){
-    reacTable[ii, 1] = gsub(pattern = "!", replacement = "", x = strsplit(x = reactions[ii], split = "=", fixed = TRUE)[[1]][1])
-    reacTable[ii, 2] = gsub(pattern = "!", replacement = "", x = strsplit(x = reactions[ii], split = "=", fixed = TRUE)[[1]][2])
+    reacTable[ii, 1] = gsub(pattern = "!", replacement = "", 
+                            x = strsplit(x = reactions[ii], split = "=", 
+                                         fixed = TRUE)[[1]][1])
+    reacTable[ii, 2] = gsub(pattern = "!", replacement = "", 
+                            x = strsplit(x = reactions[ii], split = "=", 
+                                         fixed = TRUE)[[1]][2])
+  }
+  
+  gg <- graph_from_data_frame(d = as.data.frame(integrSIF[, c(1, 3)]),
+                              directed = TRUE)
+  adj <- get.adjacency(graph = gg)
+  idx2keep <- c()
+  for(ii in 1:length(indices[[1]])){
+    currMeas <- names(indices[[1]])[ii]
+    currCues <- colnames(cnolist@cues)[which(cnolist@cues[indices[[1]][[ii]][2], ]==1)]
+      spList <- list()
+      for(jj in length(currCues)){
+        sP <- all_simple_paths(graph = gg, 
+                               from = which(rownames(adj)==currCues[jj]), 
+                               to = which(rownames(adj)==currMeas))
+        if(length(sP)>0){
+          for(kk in 1:length(sP)){
+            if(length(sP[[kk]])>1){
+              for(ll in 1:(length(sP[[kk]])-1)){
+                ss <- rownames(adj)[sP[[kk]]][ll]
+                tt <- rownames(adj)[sP[[kk]]][ll+1]
+                idx1 <- which(reacTable[, 1]==ss)
+                idx2 <- which(reacTable[, 2]==tt)
+                idx <- intersect(x = idx1, y = idx2)
+                if(length(idx)>0){idx2keep <- c(idx2keep, idx)}
+              }
+            }
+          }
+        }
+      }
+  }
+  
+  idx2keep <- unique(idx2keep)
+  if(length(idx2keep)>0){
+    if(length(idx2keep)==1){
+      reacTable <- t(as.matrix(reacTable[idx2keep, ]))
+    } else {
+      reacTable <- reacTable[idx2keep, ]
+    }
   }
   
   if(!is.null(database)){

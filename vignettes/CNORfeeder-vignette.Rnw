@@ -322,8 +322,10 @@ Now, we perform the initial ODE analysis and generate the simulation results of 
 <<results, eval=FALSE, results=hide>>=
 # set initial parameters (here parameters k and tau are optimised and n fixed to 3)
 ode_parameters=createLBodeContPars(model, LB_n = 1, LB_k = 0,
-                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
-                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+                                   LB_tau = 0, UB_n = 3, UB_k = 1, 
+                                   UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, 
+                                   opt_n = FALSE, opt_k = TRUE,
                                    opt_tau = TRUE, random = TRUE)
 
 ## Parameter Optimization
@@ -406,9 +408,11 @@ Finally, we then optimize the integrated PKN to data and observe the effects of 
 
 <<results, eval=FALSE, results=hide>>=
 # interactions from the database and from the FEED algorithm which we want to integrate
-ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, LB_k = 0,
-                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
-                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, 
+                                   LB_k = 0, LB_tau = 0, UB_n = 3, 
+                                   UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, 
+                                   opt_n = FALSE, opt_k = TRUE,
                                    opt_tau = TRUE, random = TRUE)
 
 res1 = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel, 
@@ -429,14 +433,17 @@ plotLBodeFitness(cnolist = res1$CNOList, model = res1$`Integrated-Model`$model,
 
 <<results, eval=FALSE, results=hide>>=
 # interactions from the database and from the FEED algorithm which we want to integrate
-ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, LB_k = 0,
-                                   LB_tau = 0, UB_n = 3, UB_k = 1, UB_tau = 1, default_n = 3,
-                                   default_k = 0.5, default_tau = 0.01, opt_n = FALSE, opt_k = TRUE,
+ode_parameters=createLBodeContPars(integratedModel$model, LB_n = 1, 
+                                   LB_k = 0, LB_tau = 0, UB_n = 3, 
+                                   UB_k = 1, UB_tau = 1, default_n = 3,
+                                   default_k = 0.5, default_tau = 0.01, 
+                                   opt_n = FALSE, opt_k = TRUE,
                                    opt_tau = TRUE, random = TRUE)
 
 res2 = runDynamicFeeder(cnolist = cnolist, integratedModel = integratedModel, 
                         ode_parameters = ode_parameters, paramsSSm = paramsSSm, 
-                        penFactor_k = 10000, penFactorPIN_k = 10000, penFactor_tau = 10000)
+                        penFactor_k = 10000, penFactorPIN_k = 10000, 
+                        penFactor_tau = 10000)
 
 plotLBodeFitness(cnolist = res2$CNOList, model = res2$`Integrated-Model`$model, 
                  ode_parameters = res2$Parameters, transfer_function = 4)
