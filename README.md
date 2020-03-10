@@ -6,6 +6,9 @@ way and supported by protein-protein interactions as described in:
 
 F. Eduati, J. De Las Rivas, B. Di Camillo, G. Toffolo, J. Saez-Rodriguez. [Integrating literature-constrained and data-driven inference of signalling networks](http://bioinformatics.oxfordjournals.org/content/28/18/2311). *Bioinformatics*, 2012 , 28 (18)
 
+E. Gjerga, P. Trairatphisan, A. Gabor, H. Koch, C. Chevalier, F. Ceccarelli, A. Dugourd, A. Mitsos, J. Saez0Rodriguez. [Converting networks to predictive logic 
+models from perturbation signalling data with CellNOpt](https://www.biorxiv.org/content/10.1101/2020.03.04.976852v1). *biRxiv*, 2020 , 28 (18)
+
 ## Requirements
 
 All network modelling steps were performed in [R](https://www.r-project.org/) v3.5.1 and visualised using [Cytoscape v3.4.](http://chianti.ucsd.edu/cytoscape-3.4.0/)
@@ -31,9 +34,9 @@ CellNOpt-Feeder is currently available for the installation as an R-package from
 # Install CARNIVAL from Github using devtools
 # install.packages('devtools') # in case devtools hasn't been installed
 library(devtools)
-install_github('saezlab/CellNOpt-Feeder', build_vignettes = TRUE)
+install_github('saezlab/CNORfeeder', build_vignettes = TRUE)
 # or download the source file from GitHub and install from source
-install.packages('path_to_extracted_CellNOpt-Feeder-main_directory', repos = NULL, type="source")
+install.packages('path_to_extracted_CNORfeeder-main_directory', repos = NULL, type="source")
 ```
 
 ## Toy Example
